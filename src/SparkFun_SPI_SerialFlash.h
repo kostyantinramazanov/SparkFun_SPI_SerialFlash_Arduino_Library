@@ -60,7 +60,8 @@ typedef enum
   SFE_FLASH_COMMAND_READ_JEDEC_ID = 0x9F,
   SFE_FLASH_COMMAND_AAI_WORD_PROGRAM = 0xAD,        // Auto Address Increment Programming
   SFE_FLASH_COMMAND_CHIP_ERASE = 0xC7,
-  SFE_FLASH_COMMAND_READ_STATUS_45XX = 0xD7
+  SFE_FLASH_COMMAND_READ_STATUS_45XX = 0xD7,
+  SFE_FLASH_COMMAND_READ_SERIAL_NUMBER = 0x4B
 } sfe_flash_commands_e;
 
 // Flash Family
@@ -81,6 +82,7 @@ typedef enum
   SFE_FLASH_MFG_MACRONIX = 0xC2,
   SFE_FLASH_MFG_GIGADEVICE = 0xC8,
   SFE_FLASH_MFG_WINBOND = 0xEF,
+  SFE_FLASH_MFG_BOYA = 0x68,
   SFE_FLASH_MFG_UNKNOWN = 0xFF
 } sfe_flash_manufacturer_e;
 
@@ -118,6 +120,7 @@ class SFE_SPI_FLASH
     uint16_t getDeviceID(); //Reads the Device ID
     const char *manufacturerIDString(sfe_flash_manufacturer_e manufacturer); //Pretty-print the manufacturer
     sfe_flash_read_write_result_e disableWrite(); //Disable writing with SFE_FLASH_COMMAND_WRITE_DISABLE
+    voidreadSerialNumber(uint8_t* sn);
 
     // Enable debug messages using the chosen Serial port (Stream)
     // Boards like the RedBoard Turbo use SerialUSB (not Serial).

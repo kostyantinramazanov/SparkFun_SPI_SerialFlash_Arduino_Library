@@ -126,6 +126,10 @@ bool SFE_SPI_FLASH::isConnected()
     //https://www.cypress.com/file/316661/download
     return (true);
   }
+  else if (mfgID == SFE_FLASH_MFG_BOYA) //Boya
+  {
+    return (true);
+  }
 
   if (_printDebug == true)
   {
@@ -538,6 +542,9 @@ sfe_flash_manufacturer_e SFE_SPI_FLASH::getManufacturerID()
     case ((uint8_t)SFE_FLASH_MFG_WINBOND):
       return (SFE_FLASH_MFG_WINBOND);
       break;
+    case ((uint8_t)SFE_FLASH_MFG_BOYA):
+      return (SFE_FLASH_MFG_BOYA);
+      break;
     default:
       return (SFE_FLASH_MFG_UNKNOWN);
       break;
@@ -606,6 +613,9 @@ const char *SFE_SPI_FLASH::manufacturerIDString(sfe_flash_manufacturer_e manufac
   case SFE_FLASH_MFG_WINBOND:
     return "Winbond";
     break;
+  case SFE_FLASH_MFG_BOYA:
+    return "BoyaMicro";
+    break;
   default:
     return "UNKNOWN";
     break;
@@ -645,4 +655,22 @@ void SFE_SPI_FLASH::disableDebugging(void)
 {
   _printDebug = false; //Turn off extra print statements
 }
+
+void SFE_SPI_FLASH::readSerialNumber(uint8_t *sn)
+{ 
+  _spiPort->beginTransaction(SPISettings(_spiPortSpeed, MSBFIRST, _spiMode));
+  digitalWrite(_PIN_FLASH_CS, LOW);
+  _spiPort->transfer(SFE_FLASH_COMMAND_READ_SERIAL_NUMBER); //Read manufacturer and device ID
+  _spiPort->transfer16(0);
+  _spiPort->transfer16(0);
+  for (uint8_t x = 0 ; x < 8 ; x++)
+  {
+    sn[x] |= _spiPort->transfer(0xFF);
+  }
+  digitalWrite(_PIN_FLASH_CS, HIGH);
+  _spiPort->endTransaction();
+}
+
+
+
 
